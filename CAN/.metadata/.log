@@ -1,0 +1,164 @@
+!SESSION 2024-09-15 16:11:57.987 -----------------------------------------------
+eclipse.buildId=4.6.3.M20170301-0400
+java.version=1.8.0_151
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Framework arguments:  -pluginCustomization configuration/st_pref.ini -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -pluginCustomization configuration/st_pref.ini -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.tm4e.core 4 0 2024-09-15 16:11:59.217
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.tm4e.core [610]
+  Unresolved requirement: Require-Bundle: org.apache.batik.css; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+  Unresolved requirement: Require-Bundle: org.apache.batik.util; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+  Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:444)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1620)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1599)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1571)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1514)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY org.eclipse.tm4e.registry 4 0 2024-09-15 16:11:59.220
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.tm4e.registry [611]
+  Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+  Unresolved requirement: Require-Bundle: org.eclipse.tm4e.core; bundle-version="0.13.1"
+    -> Bundle-SymbolicName: org.eclipse.tm4e.core; bundle-version="0.13.1.202409082157"
+       org.eclipse.tm4e.core [610]
+         Unresolved requirement: Require-Bundle: org.apache.batik.css; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+         Unresolved requirement: Require-Bundle: org.apache.batik.util; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+         Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:444)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1620)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1599)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1571)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1514)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY org.eclipse.tm4e.samples 4 0 2024-09-15 16:11:59.221
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.tm4e.samples [612]
+  Unresolved requirement: Require-Bundle: org.eclipse.ui.genericeditor; bundle-version="1.0.0"; resolution:="optional"
+  Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+  Unresolved requirement: Require-Bundle: org.eclipse.tm4e.ui; bundle-version="0.13.1"
+    -> Bundle-SymbolicName: org.eclipse.tm4e.ui; bundle-version="0.13.1.202409061619"; singleton:="true"
+       org.eclipse.tm4e.ui [613]
+         Unresolved requirement: Require-Bundle: org.eclipse.ui.trace; resolution:="optional"
+         Unresolved requirement: Require-Bundle: org.eclipse.tm4e.core; bundle-version="0.13.1"
+           -> Bundle-SymbolicName: org.eclipse.tm4e.core; bundle-version="0.13.1.202409082157"
+              org.eclipse.tm4e.core [610]
+                Unresolved requirement: Require-Bundle: org.apache.batik.css; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+                Unresolved requirement: Require-Bundle: org.apache.batik.util; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+                Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+  Unresolved requirement: Require-Bundle: org.eclipse.tm4e.core; bundle-version="0.13.1"
+    -> Bundle-SymbolicName: org.eclipse.tm4e.core; bundle-version="0.13.1.202409082157"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:444)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1620)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1599)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1571)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1514)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY org.eclipse.tm4e.ui 4 0 2024-09-15 16:11:59.222
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.tm4e.ui [613]
+  Unresolved requirement: Require-Bundle: org.eclipse.ui.trace; resolution:="optional"
+  Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+  Unresolved requirement: Require-Bundle: org.eclipse.tm4e.registry; bundle-version="0.13.1"
+    -> Bundle-SymbolicName: org.eclipse.tm4e.registry; bundle-version="0.13.1.202409041158"; singleton:="true"
+       org.eclipse.tm4e.registry [611]
+         Unresolved requirement: Require-Bundle: org.eclipse.tm4e.core; bundle-version="0.13.1"
+           -> Bundle-SymbolicName: org.eclipse.tm4e.core; bundle-version="0.13.1.202409082157"
+              org.eclipse.tm4e.core [610]
+                Unresolved requirement: Require-Bundle: org.apache.batik.css; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+                Unresolved requirement: Require-Bundle: org.apache.batik.util; bundle-version="[1.16.0,2.0.0)"; resolution:="optional"
+                Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+  Unresolved requirement: Require-Bundle: org.eclipse.tm4e.core; bundle-version="0.13.1"
+    -> Bundle-SymbolicName: org.eclipse.tm4e.core; bundle-version="0.13.1.202409082157"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:444)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1620)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1599)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1571)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1514)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY org.eclipse.egit.ui 2 0 2024-09-15 16:12:34.503
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Nafea'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.epp.logging.aeri.ide 2 17 2024-09-15 16:12:35.992
+!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $. ; version: 2.0.4.v20170307-1435
+!STACK 0
+com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:397)
+	at com.google.gson.Gson.fromJson(Gson.java:1227)
+	at com.google.gson.Gson.fromJson(Gson.java:1137)
+	at com.google.gson.Gson.fromJson(Gson.java:1047)
+	at com.google.gson.Gson.fromJson(Gson.java:1014)
+	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:93)
+	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
+	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:124)
+	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:393)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:386)
+	... 10 more
+
+!ENTRY fr.ac6.mcu.ide 1 1 2024-09-15 16:12:36.134
+!MESSAGE Started RMI Server, listening on port 21112
+
+!ENTRY org.eclipse.core.resources 4 77 2024-09-15 16:16:44.499
+!MESSAGE Invalid project description.
+!SUBENTRY 1 unknown 0 0 2024-09-15 16:16:44.499
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2024-09-15 16:16:44.499
+!MESSAGE D:\00_Skill_Up\House_Of_Demos\CAN overlaps the workspace location: D:\00_Skill_Up\House_Of_Demos\CAN
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:18:12.537
+!MESSAGE Indexed 'CAN_Master' (1 sources, 34 headers) in 0.45 sec: 1,090 declarations; 1,719 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:21:19.909
+!MESSAGE Indexed 'Demo_CAN_1' (41 sources, 108 headers) in 3.2 sec: 8,893 declarations; 55,980 references; 123 unresolved inclusions; 1 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:28:08.146
+!MESSAGE Indexed 'CAN_Master' (4 sources, 82 headers) in 0.369 sec: 3,669 declarations; 5,154 references; 6 unresolved inclusions; 29 syntax errors; 205 unresolved names (2.3%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:28:25.855
+!MESSAGE Indexed 'CAN_Master' (4 sources, 90 headers) in 0.258 sec: 3,786 declarations; 5,450 references; 3 unresolved inclusions; 29 syntax errors; 197 unresolved names (2.1%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:30:15.137
+!MESSAGE Indexed 'CAN_Master' (4 sources, 90 headers) in 0.325 sec: 3,786 declarations; 5,450 references; 3 unresolved inclusions; 29 syntax errors; 197 unresolved names (2.1%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:36:17.608
+!MESSAGE Indexed 'CAN_Master' (4 sources, 100 headers) in 0.704 sec: 5,824 declarations; 9,257 references; 2 unresolved inclusions; 1 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:38:07.039
+!MESSAGE Indexed 'CAN_Master' (4 sources, 102 headers) in 0.787 sec: 5,824 declarations; 9,523 references; 0 unresolved inclusions; 1 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:38:55.447
+!MESSAGE Indexed 'CAN_Master' (4 sources, 102 headers) in 0.765 sec: 5,824 declarations; 9,523 references; 0 unresolved inclusions; 1 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-09-15 16:40:03.873
+!MESSAGE Indexed 'CAN_Master' (4 sources, 101 headers) in 0.713 sec: 5,824 declarations; 9,517 references; 0 unresolved inclusions; 1 syntax errors; 0 unresolved names (0%)
