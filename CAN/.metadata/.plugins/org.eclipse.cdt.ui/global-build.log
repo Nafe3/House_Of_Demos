@@ -1,18 +1,20 @@
-00:04:42 **** Incremental Build of configuration Debug for project CAN_Node_1 ****
-make all 
+01:52:01 **** Incremental Build of configuration Debug for project CAN_Master ****
+make -j16 all 
 Building file: ../src/main.c
 Invoking: MCU GCC Compiler
-arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -DSTM32 -DSTM32F1 -DSTM32F103C8Tx -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103x6 -I"..\inc" -I"..\..\..\submodules\STM32CubeF1\Drivers\STM32F1xx_HAL_Driver\Inc" -I"..\..\..\submodules\STM32CubeF1\Drivers\CMSIS\Include" -I"..\..\..\submodules\STM32CubeF1\Drivers\CMSIS\Device\ST\STM32F1xx\Include" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+D:\00_Skill_Up\House_Of_Demos\CAN\CAN_Master\Debug
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -DSTM32F746xx -DUSE_STM32F746G_DISCO -DUSE_IOEXPANDER -DUSE_HAL_DRIVER -DDEBUG -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/BSP/Components" -I"D:/00_Skill_Up/House_Of_Demos/CAN/CAN_Master/inc" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Utilities" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Utilities/CPU" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Utilities/Fonts" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Utilities/Log" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Inc" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/BSP/Components/Common" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/BSP/STM32746G-Discovery" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/CMSIS/Include" -I"D:/00_Skill_Up/House_Of_Demos/submodules/STM32CubeF7/Drivers/CMSIS/Device/ST/STM32F7xx/Include"  -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
 Finished building: ../src/main.c
  
-Building target: CAN_Node_1.elf
+Building target: CAN_Master.elf
 Invoking: MCU GCC Linker
-arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"D:/00_Skill_Up/House_Of_Demos/CAN/CAN_Node_1/LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "CAN_Node_1.elf"  ./startup/startup_stm32.o ./startup/syscalls.o  ./src/main.o ./src/stm32f1xx_hal_msp.o ./src/stm32f1xx_it.o ./src/system_stm32f1xx.o  ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_cortex.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_dma.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_gpio.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_rcc.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_rcc_ex.o ./Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_uart.o   
-Finished building target: CAN_Node_1.elf
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -specs=nosys.specs -specs=nano.specs -T"D:/00_Skill_Up/House_Of_Demos/CAN/CAN_Master/LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "CAN_Master.elf" @"objects.list"   -lm
+Finished building target: CAN_Master.elf
  
 C:/Ac6/SystemWorkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.17.0.201812190825/tools/make/make --no-print-directory post-build
 Generating binary and Printing size information:
-arm-none-eabi-objcopy -O binary "CAN_Node_1.elf" "CAN_Node_1.bin"; arm-none-eabi-size "CAN_Node_1.elf"
+arm-none-eabi-objcopy -O binary "CAN_Master.elf" "CAN_Master.bin"
+arm-none-eabi-size "CAN_Master.elf"
    text	   data	    bss	    dec	    hex	filename
-  10096	    120	   1152	  11368	   2c68	CAN_Node_1.elf
+  52216	    188	  17348	  69752	  11078	CAN_Master.elf
  

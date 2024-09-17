@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.st.stm32ide.mpu.debug.config.launchConfigurationType">
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/CAN_Master.elf"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="CAN_Master"/>
+</launchConfiguration>

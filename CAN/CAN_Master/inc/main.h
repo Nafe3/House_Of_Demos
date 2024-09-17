@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stdio.h"
+#include "stm32f7xx_hal.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_ts.h"
 #include "stm32746g_discovery_lcd.h"
@@ -47,6 +48,22 @@
                                                     } \
                                               }while(0)
 #endif /* USE_FULL_ASSERT */
+
+/* Definition for CANx clock resources */
+#define CANx                           CAN1
+#define CANx_CLK_ENABLE()              __HAL_RCC_CAN1_CLK_ENABLE()
+#define CANx_GPIO_CLK_ENABLE()         __HAL_RCC_GPIOA_CLK_ENABLE()
+
+#define CANx_FORCE_RESET()             __HAL_RCC_CAN1_FORCE_RESET()
+#define CANx_RELEASE_RESET()           __HAL_RCC_CAN1_RELEASE_RESET()
+
+/* Definition for CANx Pins */
+#define CANx_TX_PIN                    GPIO_PIN_9
+#define CANx_TX_GPIO_PORT              GPIOB
+#define CANx_TX_AF                     GPIO_AF9_CAN1
+#define CANx_RX_PIN                    GPIO_PIN_8
+#define CANx_RX_GPIO_PORT              GPIOB
+#define CANx_RX_AF                     GPIO_AF9_CAN1
 
 #define RGB565_BYTE_PER_PIXEL     2
 #define ARBG8888_BYTE_PER_PIXEL   4

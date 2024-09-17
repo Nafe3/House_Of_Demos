@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\00_Skill_Up\House_Of_Demos\submodules\STM32CubeF7\Projects\STM32756G_EVAL\Examples\CAN\CAN_Loopback\SW4STM32\STM327x6G_EVAL"/>
+		<item value="D:\ITI\Subjects\GP_FOTA\FOTA_Bootloader_WorkSpace\5-23-2020_Blink_on_board_LED"/>
+		<item value="C:\STM32CubeF1\Projects\STM32F103RB-Nucleo\Examples\UART\UART_Printf\SW4STM32"/>
+		<item value="D:\00_Skill_Up\House_Of_Demos\submodules\STM32CubeF1\Projects\STM3210E_EVAL\Examples\CAN\CAN_Networking\SW4STM32"/>
+		<item value="D:\00_Skill_Up\House_Of_Demos\submodules\STM32CubeF1\Projects\STM3210E_EVAL\Examples\CAN\CAN_Networking\SW4STM32\STM3210E_EVAL"/>
+		<item value="C:\Users\Nafea\workspace\Demo_CAN_1"/>
+	</list>
+	<section name="org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea">
+		<item value="D:\00_Skill_Up\House_Of_Demos\CAN\CAN_Node_1" key="OUTSIDE_LOCATION"/>
+	</section>
+	<section name="NewWizardAction">
+		<item value="org.eclipse.cdt.ui.wizard.project" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="org.eclipse.cdt.ui.newCWizards"/>
+			<item value="org.eclipse.ui.Examples"/>
+		</list>
+	</section>
+</section>
