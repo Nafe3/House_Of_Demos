@@ -36,6 +36,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* SD handler declared in "stm32746g_discovery_sd.c" file */
 extern SD_HandleTypeDef uSdHandle;
+extern CAN_HandleTypeDef CanHandle;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -170,6 +171,77 @@ void BSP_SDMMC_DMA_Rx_IRQHandler(void)
 /**
   * @}
   */
+  
+/**
+* @brief  This function handles CAN1 RX0 interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN1_RX0_IRQHandler(void)
+{
+  HAL_CAN_IRQHandler(&CanHandle);
+}
+
+
+/**
+* @brief  This function handles CAN2 RX0 interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN2_RX0_IRQHandler(void)
+{
+  HAL_CAN_IRQHandler(&CanHandle);
+}
+
+/**
+* @brief  This function handles CAN1 RX1 interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN1_RX1_IRQHandler(void)
+{
+  HAL_CAN_IRQHandler(&CanHandle);
+}
+
+
+/**
+* @brief  This function handles CAN2 RX1 interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN2_RX1_IRQHandler(void)
+{
+  HAL_CAN_IRQHandler(&CanHandle);
+}
+
+/**
+* @brief  This function handles CAN1 TX interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN1_TX_IRQHandler(void)
+{
+  HAL_CAN_IRQHandler(&CanHandle);
+}
+
+/**
+* @brief  This function handles CAN2 TX interrupt request.
+* @param  None
+* @retval None
+*/
+void CAN2_TX_IRQHandler(void)
+{
+ HAL_CAN_IRQHandler(&CanHandle);
+}
+
+/**
+  * @brief  This function handles PPP interrupt request.
+  * @param  None
+  * @retval None
+  */
+/*void PPP_IRQHandler(void)
+{
+}*/
 
 /**
   * @}

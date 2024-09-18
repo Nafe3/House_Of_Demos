@@ -44,7 +44,11 @@ void SysTick_Handler(void);
 void SysTick_Handler(void);
 void BSP_SDMMC_IRQHandler(void);
 void BSP_SDMMC_DMA_Rx_IRQHandler(void);
-
+void CAN2_RX0_IRQHandler(void);
+void CAN1_RX1_IRQHandler(void);
+void CAN2_RX1_IRQHandler(void);
+void CAN1_TX_IRQHandler(void);
+void CAN2_TX_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif
