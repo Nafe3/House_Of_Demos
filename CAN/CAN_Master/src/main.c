@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stlogo.h"
+#include "lcd_log.h"
 
 /** @addtogroup STM32F7xx_HAL_Examples
   * @{
@@ -30,8 +31,11 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define KEY_PRESSED     0x01
+#define KEY_NOT_PRESSED 0x00
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+uint8_t ubKeyNumber = 0x0;
 
 /* Global extern variables ---------------------------------------------------*/
 uint8_t NbLoop = 1;
@@ -50,6 +54,7 @@ uint32_t              TxMailbox;
 static void MPU_Config(void);
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
+static void CAN_Config(void);
 static void CPU_CACHE_Enable(void);
 static HAL_StatusTypeDef CAN_Polling(void);
 static void Error_Handler(void);
@@ -97,24 +102,66 @@ int main(void)
   Display_DemoDescription();
 
 
+  /* Initialize LCD Log module */
+  LCD_LOG_Init();
 
-  /* Infinite loop */
-  //while (1)
+  /* Show Header and Footer texts */
+  LCD_LOG_SetHeader((uint8_t *)"CAN Demo");
+
+
+  /* Configure the CAN peripheral */
+  LCD_UsrLog("Starting CAN config...\n");
+  CAN_Config();
+  LCD_UsrLog("CAN config done\n");
+
+  /* Output User logs */
+  //for (int i = 0; i < 50; i++)
   //{
+  //  LCD_UsrLog ("Printing from main %d \n", i);
   //}
+
+  /*Loopback*/
+  //if(CAN_Polling() == HAL_OK)
+  //{
+  //  /* OK: Turn on LED1 */
+  //  BSP_LED_On(LED1);
+  //}
+  //else
+  //{
+  //  /* KO: Turn on LED3 */
+  //  BSP_LED_Off(LED1);
+  //}
+
 //HAL_Delay(5000);
   /* Wait For User inputs */
-  Log_demo();
+  //Log_demo();
 
-  if(CAN_Polling() == HAL_OK)
+  /* Infinite loop */
+  while (1)
   {
-    /* OK: Turn on LED1 */
-    BSP_LED_On(LED1);
-  }
-  else
-  {
-    /* KO: Turn on LED3 */
-    BSP_LED_Off(LED1);
+	  if (ubKeyNumber == 0x9)
+      {
+        ubKeyNumber = 0x00;
+      }
+      else
+      {
+        //LED_Display(++ubKeyNumber);
+        ubKeyNumber++;
+        /* Set the data to be transmitted */
+        TxData[0] = ubKeyNumber;
+        TxData[1] = 0xAD;
+
+        /* Start the Transmission process */
+        HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox);
+        //if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        //{
+        //  /* Transmission request Error */
+        //	printf("A7oo\n");
+        //	Error_Handler();
+        //
+        //}
+        LCD_UsrLog("ctr = %d\n",ubKeyNumber);
+      }
   }
 }
 
@@ -456,11 +503,106 @@ HAL_StatusTypeDef CAN_Polling(void)
   */
 static void Error_Handler(void)
 {
-  /* User may add here some code to deal with this error */
-  /* Turn LED3 on */
-  BSP_LED_On(LED1);
-  while(1)
+	/* User may add here some code to deal with this error */
+	/* Turn LED3 on */
+	LCD_ErrLog("Error handler\n");
+	BSP_LED_On(LED1);
+	while(1)
+	{
+	}
+}
+
+/**
+  * @brief  Configures the CAN.
+  * @param  None
+  * @retval None
+  */
+static void CAN_Config(void)
+{
+  CAN_FilterTypeDef  sFilterConfig;
+
+  /*##-1- Configure the CAN peripheral #######################################*/
+  CanHandle.Instance = CANx;
+
+  CanHandle.Init.TimeTriggeredMode = DISABLE;
+  CanHandle.Init.AutoBusOff = DISABLE;
+  CanHandle.Init.AutoWakeUp = DISABLE;
+  CanHandle.Init.AutoRetransmission = ENABLE;
+  CanHandle.Init.ReceiveFifoLocked = DISABLE;
+  CanHandle.Init.TransmitFifoPriority = DISABLE;
+  CanHandle.Init.Mode = CAN_MODE_NORMAL;
+  CanHandle.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  CanHandle.Init.TimeSeg1 = CAN_BS1_6TQ;
+  CanHandle.Init.TimeSeg2 = CAN_BS2_2TQ;
+  CanHandle.Init.Prescaler = 6;
+
+  if (HAL_CAN_Init(&CanHandle) != HAL_OK)
   {
+    /* Initialization Error */
+    Error_Handler();
+  }
+
+  /*##-2- Configure the CAN Filter ###########################################*/
+  sFilterConfig.FilterBank = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.SlaveStartFilterBank = 14;
+
+  if (HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
+  {
+    /* Filter configuration Error */
+    Error_Handler();
+  }
+
+  /*##-3- Start the CAN peripheral ###########################################*/
+  if (HAL_CAN_Start(&CanHandle) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+
+  /*##-4- Activate CAN RX notification #######################################*/
+  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    /* Notification Error */
+    Error_Handler();
+  }
+
+  /*##-5- Configure Transmission process #####################################*/
+  TxHeader.StdId = 0x321;
+  TxHeader.ExtId = 0x01;
+  TxHeader.RTR = CAN_RTR_DATA;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.DLC = 2;
+  TxHeader.TransmitGlobalTime = DISABLE;
+}
+
+/**
+  * @brief  Rx Fifo 0 message pending callback
+  * @param  hcan: pointer to a CAN_HandleTypeDef structure that contains
+  *         the configuration information for the specified CAN.
+  * @retval None
+  */
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  /* Get RX message */
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
+  {
+    /* Reception Error */
+    Error_Handler();
+  }
+
+  /* Display LEDx */
+  if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
+  {
+    LCD_UsrLog("rxdata = %x\n",RxData[0]);
+    ubKeyNumber = RxData[0];
   }
 }
 

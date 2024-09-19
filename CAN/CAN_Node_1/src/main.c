@@ -21,6 +21,7 @@
 #include "main.h"
 #include "stm32f1xx_hal_gpio.h"
 #include "stm32f1xx_hal_rcc.h"
+#include "stm32f1xx_hal_uart.h"
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -36,6 +37,13 @@
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
+uint8_t ubKeyNumber = 0x0;
+CAN_HandleTypeDef     CanHandle;
+CAN_TxHeaderTypeDef   TxHeader;
+CAN_RxHeaderTypeDef   RxHeader;
+uint8_t               TxData[8];
+uint8_t               RxData[8];
+uint32_t              TxMailbox;
 
 /* Private function prototypes -----------------------------------------------*/
 #ifdef __GNUC__
@@ -46,7 +54,8 @@ UART_HandleTypeDef UartHandle;
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 void SystemClock_Config(void);
-static void Error_Handler(void);
+void Error_Handler(void);
+void CAN_Config(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -127,7 +136,10 @@ int main(void)
   /* Output a message on Hyperterminal using printf function */
   printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
   printf("** Test finished successfully. ** \n\r");
-
+	
+  /* Configure the CAN peripheral */
+  CAN_Config();
+  
   /* Infinite loop */
   while (1)
   {
@@ -135,6 +147,30 @@ int main(void)
 	  HAL_Delay(500);
 	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_13, GPIO_PIN_RESET);
 	  HAL_Delay(500);
+	  
+	  if (ubKeyNumber == 0x9)
+      {
+        ubKeyNumber = 0x00;
+      }
+      else
+      {
+        //LED_Display(++ubKeyNumber);
+        ubKeyNumber++;
+        /* Set the data to be transmitted */
+        TxData[0] = ubKeyNumber;
+        TxData[1] = 0xAD;
+        
+        /* Start the Transmission process */
+        HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox);
+        //if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        //{
+        //  /* Transmission request Error */
+        //	printf("A7oo\n");
+        //	Error_Handler();
+        //
+        //}
+        printf("ctr = %d\n",ubKeyNumber);
+      }
   }
 }
 
@@ -210,15 +246,110 @@ void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-static void Error_Handler(void)
+void Error_Handler(void)
 {
   /* Turn LED2 on */
   //BSP_LED_On(LED2);
+  printf("A7AAAAAAAAAAAAAAAA\n\n\n");
   while (1)
   {
   }
 }
 
+/**
+  * @brief  Configures the CAN.
+  * @param  None
+  * @retval None
+  */
+void CAN_Config(void)
+{
+  CAN_FilterTypeDef  sFilterConfig;
+
+  /* Configure the CAN peripheral */
+  CanHandle.Instance = CANx;
+
+  CanHandle.Init.TimeTriggeredMode = DISABLE;
+  CanHandle.Init.AutoBusOff = DISABLE;
+  CanHandle.Init.AutoWakeUp = DISABLE;
+  CanHandle.Init.AutoRetransmission = ENABLE;
+  CanHandle.Init.ReceiveFifoLocked = DISABLE;
+  CanHandle.Init.TransmitFifoPriority = DISABLE;
+  CanHandle.Init.Mode = CAN_MODE_NORMAL;
+  CanHandle.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  CanHandle.Init.TimeSeg1 = CAN_BS1_6TQ;
+  CanHandle.Init.TimeSeg2 = CAN_BS2_2TQ;
+  CanHandle.Init.Prescaler = 4;
+
+  if (HAL_CAN_Init(&CanHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler();
+  }
+
+  /* Configure the CAN Filter */
+  sFilterConfig.FilterBank = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.SlaveStartFilterBank = 14;
+
+  if (HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
+  {
+    /* Filter configuration Error */
+    Error_Handler();
+  }
+
+  /* Start the CAN peripheral */
+  if (HAL_CAN_Start(&CanHandle) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+
+  /* Activate CAN RX notification */
+  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    /* Notification Error */
+    Error_Handler();
+  }
+  
+  /* Configure Transmission process */
+  TxHeader.StdId = 0x321;
+  TxHeader.ExtId = 0x01;
+  TxHeader.RTR = CAN_RTR_DATA;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.DLC = 2;
+  TxHeader.TransmitGlobalTime = DISABLE;
+}
+
+/**
+  * @brief  Rx Fifo 0 message pending callback in non blocking mode
+  * @param  CanHandle: pointer to a CAN_HandleTypeDef structure that contains
+  *         the configuration information for the specified CAN.
+  * @retval None
+  */
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
+{
+  /* Get RX message */
+  if (HAL_CAN_GetRxMessage(CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
+  {
+    /* Reception Error */
+    Error_Handler();
+  }
+
+  /* Display LEDx */
+  if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
+  {
+    //LED_Display(RxData[0]);
+    printf("RxData %c\n",RxData[0]);
+    ubKeyNumber = RxData[0];
+  }
+}
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
