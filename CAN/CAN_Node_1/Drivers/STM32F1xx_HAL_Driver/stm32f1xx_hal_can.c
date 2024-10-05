@@ -1298,7 +1298,7 @@ HAL_StatusTypeDef HAL_CAN_AddTxMessage(CAN_HandleTypeDef *hcan, const CAN_TxHead
     {
       /* Update error code */
       hcan->ErrorCode |= HAL_CAN_ERROR_PARAM;
-
+      printf("ERR: AddTxMessage HAL_CAN_ERROR_PARAM\n");
       return HAL_ERROR;
     }
   }
@@ -1306,7 +1306,7 @@ HAL_StatusTypeDef HAL_CAN_AddTxMessage(CAN_HandleTypeDef *hcan, const CAN_TxHead
   {
     /* Update error code */
     hcan->ErrorCode |= HAL_CAN_ERROR_NOT_INITIALIZED;
-
+    printf("ERR: AddTxMessage HAL_CAN_ERROR_NOT_INITIALIZED\n");
     return HAL_ERROR;
   }
 }

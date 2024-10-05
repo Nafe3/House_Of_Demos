@@ -54,7 +54,7 @@ uint32_t              TxMailbox;
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 void SystemClock_Config(void);
-void Error_Handler(void);
+void Error_Handler(int);
 void CAN_Config(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -104,7 +104,7 @@ int main(void)
   if (HAL_UART_Init(&UartHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler(5);
   }
 
   /*Initialize on board LED*/
@@ -113,6 +113,7 @@ int main(void)
 
   gpio_led = GPIOC;
   /* Enable the GPIO_LED clock */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /* Configure the GPIO_LED pin */
@@ -138,7 +139,9 @@ int main(void)
   printf("** Test finished successfully. ** \n\r");
 	
   /* Configure the CAN peripheral */
+  printf("Starting CAN config...\n");
   CAN_Config();
+  printf("CAN config done\n");
   
   /* Infinite loop */
   while (1)
@@ -161,15 +164,31 @@ int main(void)
         TxData[1] = 0xAD;
         
         /* Start the Transmission process */
-        HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox);
-        //if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        {
+          /* Transmission request Error */
+        	Error_Handler(6);
+        }
+        ///* Get RX message */
+        //if (HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
         //{
-        //  /* Transmission request Error */
-        //	printf("A7oo\n");
-        //	Error_Handler();
-        //
+        //  /* Reception Error */
+        //  Error_Handler(7);
         //}
-        printf("ctr = %d\n",ubKeyNumber);
+        //
+        ////LCD_UsrLog("rxdata = %x\n",RxData[0]);
+        //
+        ///* Display LEDx */
+        //if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
+        //{
+        //  printf("rxdata = %x\n",RxData[0]);
+        //  ubKeyNumber = RxData[0];
+        //}
+        //printf("no. of available rxmsgs = %lu\t",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
+        //printf("ctr = %d\n",ubKeyNumber);
+
+        HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
+        //HAL_Delay(1000);
       }
   }
 }
@@ -246,14 +265,14 @@ void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-void Error_Handler(void)
+void Error_Handler(int err_code)
 {
   /* Turn LED2 on */
   //BSP_LED_On(LED2);
-  printf("A7AAAAAAAAAAAAAAAA\n\n\n");
-  while (1)
-  {
-  }
+  printf("Err: %d\n",err_code);
+  //while (1)
+  //{
+  //}
 }
 
 /**
@@ -278,12 +297,12 @@ void CAN_Config(void)
   CanHandle.Init.SyncJumpWidth = CAN_SJW_1TQ;
   CanHandle.Init.TimeSeg1 = CAN_BS1_6TQ;
   CanHandle.Init.TimeSeg2 = CAN_BS2_2TQ;
-  CanHandle.Init.Prescaler = 4;
+  CanHandle.Init.Prescaler = 6;
 
   if (HAL_CAN_Init(&CanHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler(0);
   }
 
   /* Configure the CAN Filter */
@@ -301,21 +320,21 @@ void CAN_Config(void)
   if (HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
   {
     /* Filter configuration Error */
-    Error_Handler();
+    Error_Handler(1);
   }
 
   /* Start the CAN peripheral */
   if (HAL_CAN_Start(&CanHandle) != HAL_OK)
   {
     /* Start Error */
-    Error_Handler();
+    Error_Handler(2);
   }
 
   /* Activate CAN RX notification */
   if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
   {
     /* Notification Error */
-    Error_Handler();
+    Error_Handler(3);
   }
   
   /* Configure Transmission process */
@@ -335,19 +354,21 @@ void CAN_Config(void)
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
 {
+	printf("no. of available rxmsgs = %lu -- ",HAL_CAN_GetRxFifoFillLevel(CanHandle, CAN_RX_FIFO0));
   /* Get RX message */
   if (HAL_CAN_GetRxMessage(CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
   {
     /* Reception Error */
-    Error_Handler();
+    Error_Handler(4);
   }
 
+
   /* Display LEDx */
-  if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
+  if ((RxHeader.StdId == 0x123) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
   {
     //LED_Display(RxData[0]);
-    printf("RxData %c\n",RxData[0]);
-    ubKeyNumber = RxData[0];
+    printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
+    //ubKeyNumber = RxData[0];
   }
 }
 #ifdef  USE_FULL_ASSERT

@@ -156,6 +156,7 @@ void CANx_RX_IRQHandler(void)
 {
   HAL_CAN_IRQHandler(&CanHandle);
 }
+
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

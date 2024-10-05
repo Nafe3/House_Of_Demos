@@ -211,7 +211,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
-
+#include "lcd_log.h"
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
   */
@@ -1049,6 +1049,7 @@ HAL_StatusTypeDef HAL_CAN_Start(CAN_HandleTypeDef *hcan)
     /* Wait the acknowledge */
     while ((hcan->Instance->MSR & CAN_MSR_INAK) != 0U)
     {
+    	LCD_UsrLog("%d\n",hcan->Instance->MSR);
       /* Check for the Timeout */
       if ((HAL_GetTick() - tickstart) > CAN_TIMEOUT_VALUE)
       {
@@ -1057,7 +1058,7 @@ HAL_StatusTypeDef HAL_CAN_Start(CAN_HandleTypeDef *hcan)
 
         /* Change CAN state */
         hcan->State = HAL_CAN_STATE_ERROR;
-
+        LCD_ErrLog("CAN_Start 1\n");
         return HAL_ERROR;
       }
     }
@@ -1072,9 +1073,10 @@ HAL_StatusTypeDef HAL_CAN_Start(CAN_HandleTypeDef *hcan)
   {
     /* Update error code */
     hcan->ErrorCode |= HAL_CAN_ERROR_NOT_READY;
-
+    LCD_ErrLog("CAN_Start 2\n");
     return HAL_ERROR;
   }
+  return HAL_OK;
 }
 
 /**
@@ -2239,6 +2241,7 @@ __weak void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
+  printf("A7a\n");
 
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_CAN_RxFifo0MsgPendingCallback could be implemented in the

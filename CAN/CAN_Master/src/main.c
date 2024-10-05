@@ -57,7 +57,7 @@ static void Display_DemoDescription(void);
 static void CAN_Config(void);
 static void CPU_CACHE_Enable(void);
 static HAL_StatusTypeDef CAN_Polling(void);
-static void Error_Handler(void);
+static void Error_Handler(int);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -109,6 +109,21 @@ int main(void)
   LCD_LOG_SetHeader((uint8_t *)"CAN Demo");
 
 
+  /*Loopback*/
+  LCD_UsrLog("Starting CAN Polling...\n");
+  if(CAN_Polling() == HAL_OK)
+  {
+    /* OK: Turn on LED1 */
+    BSP_LED_On(LED1);
+  }
+  else
+  {
+    /* KO: Turn on LED3 */
+    BSP_LED_Off(LED1);
+  }
+  LCD_UsrLog("CAN Polling done\n");
+
+
   /* Configure the CAN peripheral */
   LCD_UsrLog("Starting CAN config...\n");
   CAN_Config();
@@ -120,17 +135,7 @@ int main(void)
   //  LCD_UsrLog ("Printing from main %d \n", i);
   //}
 
-  /*Loopback*/
-  //if(CAN_Polling() == HAL_OK)
-  //{
-  //  /* OK: Turn on LED1 */
-  //  BSP_LED_On(LED1);
-  //}
-  //else
-  //{
-  //  /* KO: Turn on LED3 */
-  //  BSP_LED_Off(LED1);
-  //}
+
 
 //HAL_Delay(5000);
   /* Wait For User inputs */
@@ -139,6 +144,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+	  HAL_Delay(1000);
 	  if (ubKeyNumber == 0x9)
       {
         ubKeyNumber = 0x00;
@@ -152,15 +158,13 @@ int main(void)
         TxData[1] = 0xAD;
 
         /* Start the Transmission process */
-        HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox);
-        //if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
-        //{
-        //  /* Transmission request Error */
-        //	printf("A7oo\n");
-        //	Error_Handler();
-        //
-        //}
-        LCD_UsrLog("ctr = %d\n",ubKeyNumber);
+        if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        {
+          /* Transmission request Error */
+        	Error_Handler(10);
+
+        }
+        //LCD_UsrLog("ctr = %d\n",ubKeyNumber);
       }
   }
 }
@@ -423,7 +427,7 @@ HAL_StatusTypeDef CAN_Polling(void)
   if(HAL_CAN_Init(&CanHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler(5);
   }
 
   /*##-2- Configure the CAN Filter ###########################################*/
@@ -441,14 +445,15 @@ HAL_StatusTypeDef CAN_Polling(void)
   if(HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
   {
     /* Filter configuration Error */
-    Error_Handler();
+    Error_Handler(6);
   }
 
+  //HAL_CAN_Stop(&CanHandle);
   /*##-3- Start the CAN peripheral ###########################################*/
   if (HAL_CAN_Start(&CanHandle) != HAL_OK)
   {
     /* Start Error */
-    Error_Handler();
+    Error_Handler(7);
   }
 
   /*##-4- Start the Transmission process #####################################*/
@@ -464,7 +469,7 @@ HAL_StatusTypeDef CAN_Polling(void)
   if(HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
   {
     /* Transmission request Error */
-    Error_Handler();
+    Error_Handler(8);
   }
 
   /* Wait transmission complete */
@@ -474,14 +479,20 @@ HAL_StatusTypeDef CAN_Polling(void)
   if(HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0) != 1)
   {
     /* Reception Missing */
-    Error_Handler();
+    Error_Handler(9);
   }
 
   if(HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
   {
     /* Reception Error */
-    Error_Handler();
+    Error_Handler(10);
   }
+
+  for(int i =0;i<8;i++)
+  {
+	  LCD_UsrLog("rxdata [%d] = 0X%x\n",i,RxData[i]);
+  }
+
 
   if((RxHeader.StdId != 0x11)                     ||
      (RxHeader.RTR != CAN_RTR_DATA)               ||
@@ -501,11 +512,11 @@ HAL_StatusTypeDef CAN_Polling(void)
   * @param  None
   * @retval None
   */
-static void Error_Handler(void)
+static void Error_Handler(int err_code)
 {
 	/* User may add here some code to deal with this error */
 	/* Turn LED3 on */
-	LCD_ErrLog("Error handler\n");
+	LCD_ErrLog("Error handler: %d\n",err_code);
 	BSP_LED_On(LED1);
 	while(1)
 	{
@@ -530,7 +541,7 @@ static void CAN_Config(void)
   CanHandle.Init.AutoRetransmission = ENABLE;
   CanHandle.Init.ReceiveFifoLocked = DISABLE;
   CanHandle.Init.TransmitFifoPriority = DISABLE;
-  CanHandle.Init.Mode = CAN_MODE_NORMAL;
+  CanHandle.Init.Mode = CAN_MODE_LOOPBACK;
   CanHandle.Init.SyncJumpWidth = CAN_SJW_1TQ;
   CanHandle.Init.TimeSeg1 = CAN_BS1_6TQ;
   CanHandle.Init.TimeSeg2 = CAN_BS2_2TQ;
@@ -539,7 +550,7 @@ static void CAN_Config(void)
   if (HAL_CAN_Init(&CanHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler(1);
   }
 
   /*##-2- Configure the CAN Filter ###########################################*/
@@ -557,22 +568,24 @@ static void CAN_Config(void)
   if (HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
   {
     /* Filter configuration Error */
-    Error_Handler();
+    Error_Handler(2);
   }
+  /*##-4- Activate CAN RX notification #######################################*/
+  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    /* Notification Error */
+    Error_Handler(4);
+  }
+  HAL_Delay(2000);
 
   /*##-3- Start the CAN peripheral ###########################################*/
   if (HAL_CAN_Start(&CanHandle) != HAL_OK)
   {
     /* Start Error */
-    Error_Handler();
+    Error_Handler(3);
   }
 
-  /*##-4- Activate CAN RX notification #######################################*/
-  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-  {
-    /* Notification Error */
-    Error_Handler();
-  }
+
 
   /*##-5- Configure Transmission process #####################################*/
   TxHeader.StdId = 0x321;
@@ -591,12 +604,15 @@ static void CAN_Config(void)
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+	printf("no. of available rxmsgs = %lu -- ",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
   /* Get RX message */
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
   {
     /* Reception Error */
-    Error_Handler();
+    Error_Handler(0);
   }
+
+  //LCD_UsrLog("rxdata = %x\n",RxData[0]);
 
   /* Display LEDx */
   if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))

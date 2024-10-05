@@ -65,6 +65,10 @@
 #define CANx_RX_GPIO_PORT              GPIOB
 #define CANx_RX_AF                     GPIO_AF9_CAN1
 
+/* Definition for CAN's NVIC */
+#define CANx_RX_IRQn                   CAN1_RX0_IRQn
+#define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
+
 #define RGB565_BYTE_PER_PIXEL     2
 #define ARBG8888_BYTE_PER_PIXEL   4
 

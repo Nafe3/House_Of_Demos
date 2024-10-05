@@ -26,6 +26,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f7xx_hal.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -42,6 +43,7 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void SysTick_Handler(void);
+void CAN1_RX0_IRQHandler(void);
 void CANx_RX_IRQHandler(void);
 void BSP_SDMMC_IRQHandler(void);
 void BSP_SDMMC_DMA_Rx_IRQHandler(void);
