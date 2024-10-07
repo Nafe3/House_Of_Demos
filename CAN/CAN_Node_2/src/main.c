@@ -165,6 +165,9 @@ int main(void)
         if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
         {
           /* Transmission request Error */
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
         	Error_Handler(6);
         }
         ///* Get RX message */
@@ -182,10 +185,17 @@ int main(void)
         //  printf("rxdata = %x\n",RxData[0]);
         //  ubKeyNumber = RxData[0];
         //}
-        //printf("no. of available rxmsgs = %lu\t",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
+        //int fill=0;
+        //fill = HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0);
+        //printf("no. of available rxmsgs = %d\n",fill);
+        //for(int i=0;i<fill;i++)
+        //{
+        //
+        //	HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData);
+        //}
         //printf("ctr = %d\n",ubKeyNumber);
 
-        HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
+        //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
       }
   }
 }
@@ -320,6 +330,13 @@ void CAN_Config(void)
     Error_Handler(1);
   }
 
+  /* Activate CAN RX notification */
+  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    /* Notification Error */
+    Error_Handler(3);
+  }
+
   /* Start the CAN peripheral */
   if (HAL_CAN_Start(&CanHandle) != HAL_OK)
   {
@@ -327,12 +344,7 @@ void CAN_Config(void)
     Error_Handler(2);
   }
 
-  /* Activate CAN RX notification */
-  if (HAL_CAN_ActivateNotification(&CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-  {
-    /* Notification Error */
-    Error_Handler(3);
-  }
+
   
   /* Configure Transmission process */
   TxHeader.StdId = 0x123;
@@ -363,11 +375,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
   /* Display LEDx */
   if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
   {
-    //LED_Display(RxData[0]);
-	    printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
-	    //ubKeyNumber = RxData[0];
+	  printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
   }
 }
+
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number

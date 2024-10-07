@@ -153,17 +153,7 @@ void SysTick_Handler(void)
 * @param  None
 * @retval None
 */
-//void CAN1_RX0_IRQHandler(void)
-//{
-//  HAL_CAN_IRQHandler(&CanHandle);
-//}
-
-/**
-* @brief  This function handles CAN1 RX1 interrupt request.
-* @param  None
-* @retval None
-*/
-void CAN1_RX1_IRQHandler(void)
+void CAN1_RX0_IRQHandler(void)
 {
   HAL_CAN_IRQHandler(&CanHandle);
 }

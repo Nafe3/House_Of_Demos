@@ -1697,7 +1697,6 @@ HAL_StatusTypeDef HAL_CAN_DeactivateNotification(CAN_HandleTypeDef *hcan, uint32
   */
 void HAL_CAN_IRQHandler(CAN_HandleTypeDef *hcan)
 {
-	printf("A7a\n");
   uint32_t errorcode = HAL_CAN_ERROR_NONE;
   uint32_t interrupts = READ_REG(hcan->Instance->IER);
   uint32_t msrflags = READ_REG(hcan->Instance->MSR);

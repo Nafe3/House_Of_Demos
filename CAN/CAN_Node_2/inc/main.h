@@ -26,6 +26,7 @@
 #include "stm32f1xx_hal_gpio.h"
 #include "stm32f1xx_hal_rcc.h"
 #include "stm32f1xx_hal_uart.h"
+#include "stm32f1xx_it.h"
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
@@ -67,8 +68,8 @@
 #define CANx_AFIO_REMAP_RX_TX_PIN()    __HAL_AFIO_REMAP_CAN1_2()
 
 /* Definition for CAN's NVIC */
-#define CANx_RX_IRQn                   CAN1_RX0_IRQn
-#define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
+#define CANx_RX_IRQn                  CAN1_RX0_IRQn
+#define CANx_RX_IRQHandler            CAN1_RX0_IRQHandler
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

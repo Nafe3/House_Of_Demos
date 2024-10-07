@@ -167,6 +167,9 @@ int main(void)
         if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
         {
           /* Transmission request Error */
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
+        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
         	Error_Handler(6);
         }
         ///* Get RX message */
@@ -184,11 +187,11 @@ int main(void)
         //  printf("rxdata = %x\n",RxData[0]);
         //  ubKeyNumber = RxData[0];
         //}
-        //printf("no. of available rxmsgs = %lu\t",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
+        printf("no. of available rxmsgs = %d\n",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
         //printf("ctr = %d\n",ubKeyNumber);
 
-        HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
-        //HAL_Delay(1000);
+        //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
+       // HAL_Delay(3000);
       }
   }
 }
