@@ -83,6 +83,14 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();
+
+  //Disable PLL and switch to HSI (8 MHz), correct PLL setting will take place inside SystemClock_Config()
+  if((RCC->CFGR & RCC_CFGR_SWS) == RCC_CFGR_SWS_PLL)
+  {
+	  RCC->CFGR &= (uint32_t) (~RCC_CFGR_SW);
+	  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
+  }
+
   /* Configure the system clock to 200 Mhz */
   SystemClock_Config();
 
@@ -110,18 +118,18 @@ int main(void)
 
 
   /*Loopback*/
-  LCD_UsrLog("Starting CAN Polling...\n");
-  if(CAN_Polling() == HAL_OK)
-  {
-    /* OK: Turn on LED1 */
-    BSP_LED_On(LED1);
-  }
-  else
-  {
-    /* KO: Turn on LED3 */
-    BSP_LED_Off(LED1);
-  }
-  LCD_UsrLog("CAN Polling done\n");
+  //LCD_UsrLog("Starting CAN Polling...\n");
+  //if(CAN_Polling() == HAL_OK)
+  //{
+  //  /* OK: Turn on LED1 */
+  //  BSP_LED_On(LED1);
+  //}
+  //else
+  //{
+  //  /* KO: Turn on LED3 */
+  //  BSP_LED_Off(LED1);
+  //}
+  //LCD_UsrLog("CAN Polling done\n");
 
 
   /* Configure the CAN peripheral */
@@ -518,9 +526,9 @@ static void Error_Handler(int err_code)
 	/* Turn LED3 on */
 	LCD_ErrLog("Error handler: %d\n",err_code);
 	BSP_LED_On(LED1);
-	while(1)
-	{
-	}
+	//while(1)
+	//{
+	//}
 }
 
 /**
@@ -576,7 +584,7 @@ static void CAN_Config(void)
     /* Notification Error */
     Error_Handler(4);
   }
-  HAL_Delay(2000);
+  //HAL_Delay(2000);
 
   /*##-3- Start the CAN peripheral ###########################################*/
   if (HAL_CAN_Start(&CanHandle) != HAL_OK)

@@ -1049,7 +1049,7 @@ HAL_StatusTypeDef HAL_CAN_Start(CAN_HandleTypeDef *hcan)
     /* Wait the acknowledge */
     while ((hcan->Instance->MSR & CAN_MSR_INAK) != 0U)
     {
-    	LCD_UsrLog("%d\n",hcan->Instance->MSR);
+    	//LCD_UsrLog("%d\n",hcan->Instance->MSR);
       /* Check for the Timeout */
       if ((HAL_GetTick() - tickstart) > CAN_TIMEOUT_VALUE)
       {

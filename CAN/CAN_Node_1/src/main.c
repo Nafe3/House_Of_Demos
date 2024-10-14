@@ -164,14 +164,18 @@ int main(void)
         TxData[1] = 0xAD;
         
         /* Start the Transmission process */
-        if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&CanHandle))
         {
-          /* Transmission request Error */
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
-        	Error_Handler(6);
+        	if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        	{
+        	  /* Transmission request Error */
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
+        		Error_Handler(6);
+        	}
         }
+
         ///* Get RX message */
         //if (HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
         //{
