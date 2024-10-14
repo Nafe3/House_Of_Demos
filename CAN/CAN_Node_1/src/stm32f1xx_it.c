@@ -152,7 +152,7 @@ void SysTick_Handler(void)
 * @param  None
 * @retval None
 */
-void CANx_RX_IRQHandler(void)
+void CAN1_RX0_IRQHandler(void)
 {
   HAL_CAN_IRQHandler(&CanHandle);
 }

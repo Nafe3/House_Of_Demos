@@ -31,6 +31,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+#define HUMIDITY_MIN	30
+#define HUMIDITY_MAX 60
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
@@ -41,6 +43,7 @@ CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               TxData[8];
 uint8_t               RxData[8];
 uint32_t              TxMailbox;
+uint8_t 			  gu8_humidity = HUMIDITY_MIN;
 
 /* Private function prototypes -----------------------------------------------*/
 #ifdef __GNUC__
@@ -131,8 +134,10 @@ int main(void)
   //GPIO_Init(PORTC,&C13_LED);
 
   /* Output a message on Hyperterminal using printf function */
-  printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
-  printf("** Test finished successfully. ** \n\r");
+  //printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
+  //printf("** Test finished successfully. ** \n\r");
+
+  printf("** Node 3 (Humidity Sensor) ** \n\r");
 
   HAL_CAN_MspDeInit(&CanHandle);
 	
@@ -144,22 +149,29 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_2, GPIO_PIN_SET);
+	  HAL_Delay(5000);
+	  HAL_GPIO_TogglePin(gpio_led, GPIO_PIN_2);
 	  HAL_Delay(500);
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_2, GPIO_PIN_RESET);
-	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(gpio_led, GPIO_PIN_2);
 	  
-	  if (ubKeyNumber == 0x9)
-      {
-        ubKeyNumber = 0x00;
-      }
-      else
-      {
-        //LED_Display(++ubKeyNumber);
-        ubKeyNumber++;
-        /* Set the data to be transmitted */
-        TxData[0] = ubKeyNumber;
-        TxData[1] = 0xAE;
+	  //if (ubKeyNumber == 0x9)
+      //{
+      //  ubKeyNumber = 0x00;
+      //}
+      //else
+      //{
+      //  //LED_Display(++ubKeyNumber);
+      //  ubKeyNumber++;
+      //  /* Set the data to be transmitted */
+      //  TxData[0] = ubKeyNumber;
+      //  TxData[1] = 0xAE;
+
+		if (gu8_humidity > HUMIDITY_MAX)
+		{
+			gu8_humidity = HUMIDITY_MIN;
+		}
+		TxData[0] = 0xBB;
+		TxData[1] = gu8_humidity++;
         
         /* Start the Transmission process */
         if (HAL_CAN_GetTxMailboxesFreeLevel(&CanHandle))
@@ -199,7 +211,7 @@ int main(void)
         //printf("ctr = %d\n",ubKeyNumber);
 
         //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
-      }
+      //}
   }
 }
 

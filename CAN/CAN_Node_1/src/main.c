@@ -146,57 +146,55 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_13, GPIO_PIN_SET);
 	  HAL_Delay(500);
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_13, GPIO_PIN_RESET);
-	  HAL_Delay(500);
-	  
-	  if (ubKeyNumber == 0x9)
-      {
-        ubKeyNumber = 0x00;
-      }
-      else
-      {
-        //LED_Display(++ubKeyNumber);
-        ubKeyNumber++;
-        /* Set the data to be transmitted */
-        TxData[0] = ubKeyNumber;
-        TxData[1] = 0xAD;
-        
-        /* Start the Transmission process */
-        if (HAL_CAN_GetTxMailboxesFreeLevel(&CanHandle))
-        {
-        	if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
-        	{
-        	  /* Transmission request Error */
-        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
-        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
-        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
-        		Error_Handler(6);
-        	}
-        }
+	  HAL_GPIO_TogglePin(gpio_led, GPIO_PIN_13);
 
-        ///* Get RX message */
-        //if (HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
-        //{
-        //  /* Reception Error */
-        //  Error_Handler(7);
-        //}
-        //
-        ////LCD_UsrLog("rxdata = %x\n",RxData[0]);
-        //
-        ///* Display LEDx */
-        //if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
-        //{
-        //  printf("rxdata = %x\n",RxData[0]);
-        //  ubKeyNumber = RxData[0];
-        //}
-        printf("no. of available rxmsgs = %d\n",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
-        //printf("ctr = %d\n",ubKeyNumber);
-
-        //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
-       // HAL_Delay(3000);
-      }
+	  //if (ubKeyNumber == 0x9)
+      //{
+      //  ubKeyNumber = 0x00;
+      //}
+      //else
+      //{
+      //  //LED_Display(++ubKeyNumber);
+      //  //ubKeyNumber++;
+      //  ///* Set the data to be transmitted */
+      //  //TxData[0] = ubKeyNumber;
+      //  //TxData[1] = 0xAD;
+      //  //
+      //  ///* Start the Transmission process */
+      //  //if (HAL_CAN_GetTxMailboxesFreeLevel(&CanHandle))
+      //  //{
+      //  //	if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+      //  //	{
+      //  //	  /* Transmission request Error */
+      //  //		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
+      //  //		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
+      //  //		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
+      //  //		Error_Handler(6);
+      //  //	}
+      //  //}
+      //
+      //  ///* Get RX message */
+      //  //if (HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
+      //  //{
+      //  //  /* Reception Error */
+      //  //  Error_Handler(7);
+      //  //}
+      //  //
+      //  ////LCD_UsrLog("rxdata = %x\n",RxData[0]);
+      //  //
+      //  ///* Display LEDx */
+      //  //if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
+      //  //{
+      //  //  printf("rxdata = %x\n",RxData[0]);
+      //  //  ubKeyNumber = RxData[0];
+      //  //}
+      //  //printf("no. of available rxmsgs = %d\n",HAL_CAN_GetRxFifoFillLevel(&CanHandle, CAN_RX_FIFO0));
+      //  //printf("ctr = %d\n",ubKeyNumber);
+      //
+      //  //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
+      // // HAL_Delay(3000);
+      //}
   }
 }
 
@@ -361,7 +359,7 @@ void CAN_Config(void)
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
 {
-	printf("no. of available rxmsgs = %lu -- ",HAL_CAN_GetRxFifoFillLevel(CanHandle, CAN_RX_FIFO0));
+	//printf("no. of available rxmsgs = %lu -- ",HAL_CAN_GetRxFifoFillLevel(CanHandle, CAN_RX_FIFO0));
   /* Get RX message */
   if (HAL_CAN_GetRxMessage(CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
   {
@@ -373,8 +371,20 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
   /* Display LEDx */
   if ((RxHeader.StdId == 0x123) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
   {
+	  if(RxData[0]==0xAA)
+	  {
+		  printf("Node 2 sent Temperature = %d Celsius\n",RxData[1]);
+	  }
+	  else if(RxData[0]==0xBB)
+	  {
+		  printf("Node 3 sent Humidity = %d %%\n",RxData[1]);
+	  }
+	  else
+	  {
+		  printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
+	  }
     //LED_Display(RxData[0]);
-    printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
+    //printf("RxData 0x%x 0x%x\n",RxData[0],RxData[1]);
     //ubKeyNumber = RxData[0];
   }
 }

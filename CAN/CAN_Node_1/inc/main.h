@@ -64,8 +64,8 @@
 #define CANx_AFIO_REMAP_RX_TX_PIN()    __HAL_AFIO_REMAP_CAN1_2()
 
 /* Definition for CAN's NVIC */
-#define CANx_RX_IRQn                   CAN1_RX1_IRQn
-#define CANx_RX_IRQHandler             CAN1_RX1_IRQHandler
+#define CANx_RX_IRQn                  CAN1_RX0_IRQn
+#define CANx_RX_IRQHandler            CAN1_RX0_IRQHandler
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

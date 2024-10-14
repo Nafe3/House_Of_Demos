@@ -31,6 +31,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+#define TEMPERATURE_MIN 0
+#define TEMPERATURE_MAX 30
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
@@ -41,6 +43,7 @@ CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               TxData[8];
 uint8_t               RxData[8];
 uint32_t              TxMailbox;
+uint8_t 			  gu8_temperature = TEMPERATURE_MIN;
 
 /* Private function prototypes -----------------------------------------------*/
 #ifdef __GNUC__
@@ -131,8 +134,10 @@ int main(void)
   //GPIO_Init(PORTC,&C13_LED);
 
   /* Output a message on Hyperterminal using printf function */
-  printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
-  printf("** Test finished successfully. ** \n\r");
+  //printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
+  //printf("** Test finished successfully. ** \n\r");
+
+  printf("** Node 2 (Temperature Sensor) ** \n\r");
 
   HAL_CAN_MspDeInit(&CanHandle);
 	
@@ -144,31 +149,41 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_2, GPIO_PIN_SET);
+	  HAL_Delay(3000);
+	  HAL_GPIO_TogglePin(gpio_led, GPIO_PIN_2);
 	  HAL_Delay(500);
-	  HAL_GPIO_WritePin(gpio_led, GPIO_PIN_2, GPIO_PIN_RESET);
-	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(gpio_led, GPIO_PIN_2);
 	  
-	  if (ubKeyNumber == 0x9)
-      {
-        ubKeyNumber = 0x00;
-      }
-      else
-      {
+	  //if (ubKeyNumber == 0x9)
+      //{
+      //  ubKeyNumber = 0x00;
+      //}
+      //else
+      //{
         //LED_Display(++ubKeyNumber);
-        ubKeyNumber++;
+        //ubKeyNumber++;
         /* Set the data to be transmitted */
-        TxData[0] = ubKeyNumber;
-        TxData[1] = 0xAE;
+        //TxData[0] = ubKeyNumber;
+        //TxData[1] = 0xAE;
         
-        /* Start the Transmission process */
-        if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        if (gu8_temperature > TEMPERATURE_MAX)
         {
-          /* Transmission request Error */
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
-        	HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
-        	Error_Handler(6);
+        	gu8_temperature = TEMPERATURE_MIN;
+        }
+        TxData[0] = 0xAA;
+        TxData[1] = gu8_temperature++;
+
+        /* Start the Transmission process */
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&CanHandle))
+        {
+        	if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        	{
+        	  /* Transmission request Error */
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX0);
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX1);
+        		HAL_CAN_AbortTxRequest(&CanHandle, CAN_TX_MAILBOX2);
+        		Error_Handler(6);
+        	}
         }
         ///* Get RX message */
         //if (HAL_CAN_GetRxMessage(&CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
@@ -196,7 +211,7 @@ int main(void)
         //printf("ctr = %d\n",ubKeyNumber);
 
         //HAL_CAN_RxFifo0MsgPendingCallback(&CanHandle);
-      }
+      //}
   }
 }
 
